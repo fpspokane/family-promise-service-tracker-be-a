@@ -5,15 +5,33 @@ const Providers = require('../provider/providerModel');
 const oktaJwtVerifier = new OktaJwtVerifier(oktaVerifierConfig.config);
 const ProviderRoles = require('../providerRoles/providerRoleModel');
 
+const getUserRoleId = async (userTypeId) => {
+  try {
+    let role;
+
+    const oktaUserType = await okta.getUserType(userTypeId);
+
+    const roles = await ProviderRoles.findAll();
+
+    if (oktaUserType.name === 'user') {
+      role = roles.find((role) => role.provider_role === 'Service Provider');
+    } else {
+      role = roles.find(
+        (role) => role.provider_role === oktaUserType.displayName
+      );
+    }
+
+    return role.provider_role_id;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const makeProfileObj = async (id) => {
   try {
     const oktaUser = await okta.getUser(id);
 
-    const roles = await ProviderRoles.findAll();
-
-    const serviceProvider = roles.find(
-      (role) => role.provider_role === 'Service Provider'
-    );
+    const roleId = await getUserRoleId(oktaUser.type.id);
 
     return {
       provider_id: id,
@@ -21,7 +39,7 @@ const makeProfileObj = async (id) => {
       provider_first_name: oktaUser.profile.firstName,
       provider_last_name: oktaUser.profile.lastName,
       provider_avatar_url: `https://avatars.dicebear.com/api/initials/${oktaUser.profile.firstName}%20${oktaUser.profile.lastName}.svg`,
-      provider_role_id: serviceProvider.provider_role_id,
+      provider_role_id: roleId,
     };
   } catch (err) {
     throw new Error(err);
