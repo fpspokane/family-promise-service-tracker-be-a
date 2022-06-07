@@ -113,8 +113,12 @@ const addProvider = async (provider) => {
       program_id: programId.program_id,
     });
   }
+
   return findById(newProvider.provider_id);
 };
+
+const create = async (provider) =>
+  await knex('providers').insert(provider).returning('*');
 
 const removeProvider = async (id) => {
   const userObj = await findById(id);
@@ -135,4 +139,5 @@ module.exports = {
   updateProvider,
   removeProvider,
   addProvider,
+  create,
 };

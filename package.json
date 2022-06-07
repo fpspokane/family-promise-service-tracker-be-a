@@ -24,17 +24,6 @@
     "seedh": "npx heroku run npm run knex seed:run -a fp-service-tracker",
     "reseth": "npm run rollbackh && npm run migrateh && npm run seedh"
   },
-  "lint-staged": {
-    "api/**/*.js": [
-      "eslint --fix",
-      "prettier-eslint --write"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "jest": {
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [

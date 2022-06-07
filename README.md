@@ -82,6 +82,7 @@ There are 3 options to get postgresql installed locally [Choose one]:
 - run: `npm run watch:dev` to start nodemon in local dev enviornment.
 
 ### Getting coordinates for location data
+
 - The location seed data comes from `data/addresses_data.js` and is combined faker data in the locations seed file.
 - The coordinates for addresses were generated with the helper file in `utils/getAddressesWithCoords.js`
 - This helper file can be used as a service in the event that future location data needs coordinates

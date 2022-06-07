@@ -3,10 +3,17 @@ const OktaJwtVerifier = require('@okta/jwt-verifier');
 const { oktaVerifierConfig, okta } = require('../../config/okta');
 const Providers = require('../provider/providerModel');
 const oktaJwtVerifier = new OktaJwtVerifier(oktaVerifierConfig.config);
+const ProviderRoles = require('../providerRoles/providerRoleModel');
 
 const makeProfileObj = async (id) => {
   try {
     const oktaUser = await okta.getUser(id);
+
+    const roles = await ProviderRoles.findAll();
+
+    const serviceProvider = roles.find(
+      (role) => role.provider_role === 'Service Provider'
+    );
 
     return {
       provider_id: id,
@@ -14,6 +21,7 @@ const makeProfileObj = async (id) => {
       provider_first_name: oktaUser.profile.firstName,
       provider_last_name: oktaUser.profile.lastName,
       provider_avatar_url: `https://avatars.dicebear.com/api/initials/${oktaUser.profile.firstName}%20${oktaUser.profile.lastName}.svg`,
+      provider_role_id: serviceProvider.provider_role_id,
     };
   } catch (err) {
     throw new Error(err);
@@ -26,28 +34,37 @@ const makeProfileObj = async (id) => {
  * it looks to see if there is already a user in the DB, and if not, creates one.
  * Return the full profile object in req.profile to pass along to client as needed.
  */
+
 const authRequired = async (req, res, next) => {
   try {
     // make sure token exists
     const authHeader = req.headers.authorization || '';
     const match = authHeader.match(/Bearer (.+)/);
+
     if (!match) throw new Error('Missing idToken');
+
     const idToken = match[1];
+
     // verify it is valid with Okta
     const verify = await oktaJwtVerifier.verifyAccessToken(
       idToken,
       oktaVerifierConfig.expectedAudience
     );
+
     // if valid, check if user profile already exists
     const profile = await Providers.findById(verify.claims.sub);
+
     if (profile) {
       req.profile = profile;
     } else {
       // if profile doesn't already exist, create one
       const providerObj = await makeProfileObj(verify.claims.sub);
+
       const newProvider = await Providers.create(providerObj);
+
       req.profile = await Providers.findById(newProvider[0].provider_id);
     }
+
     next();
   } catch (err) {
     next(createError(401, err.message));

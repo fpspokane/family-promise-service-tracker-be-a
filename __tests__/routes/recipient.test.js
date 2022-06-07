@@ -6,18 +6,18 @@ const server = express();
 server.use(express.json());
 
 // Test User
-const testUser1 = {
-  id: 1,
-  name: "Terrell Davis",
-  age: 76,
-  ethnicity: "black/african_american",
-  address: "36429 Brenda Mills",
-  city: "New Damianville",
-  state: "HI",
-  zip_code: "08259-2106",
-  veteran_status: false,
-  household_size: 8
-};
+// const testUser1 = {
+//   id: 1,
+//   name: 'Terrell Davis',
+//   age: 76,
+//   ethnicity: 'black/african_american',
+//   address: '36429 Brenda Mills',
+//   city: 'New Damianville',
+//   state: 'HI',
+//   zip_code: '08259-2106',
+//   veteran_status: false,
+//   household_size: 8,
+// };
 
 jest.mock('../../api/utils/db-helper');
 
@@ -27,7 +27,7 @@ jest.mock('../../api/middleware/authRequired', () =>
 );
 
 jest.mock('../../api/middleware/authorization', () => ({
-  requireAdmin: (req, res, next) => next()
+  requireAdmin: (req, res, next) => next(),
 }));
 
 describe('status router endpoints', () => {
