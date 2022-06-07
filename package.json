@@ -19,21 +19,10 @@
     "migrate": "npm run knex migrate:latest",
     "seed": "npm run knex seed:run",
     "reset": "npm run rollback && npm run migrate && npm run seed",
-    "migrateh": "npx heroku run npm run knex migrate:latest -a fp-service-tracker",
-    "rollbackh": "npx heroku run npm run knex migrate:rollback -a fp-service-tracker",
-    "seedh": "npx heroku run npm run knex seed:run -a fp-service-tracker",
+    "migrateh": "npx heroku run npm run knex migrate:latest -a service-tracker-api",
+    "rollbackh": "npx heroku run npm run knex migrate:rollback -a service-tracker-api",
+    "seedh": "npx heroku run npm run knex seed:run -a service-tracker-api",
     "reseth": "npm run rollbackh && npm run migrateh && npm run seedh"
-  },
-  "lint-staged": {
-    "api/**/*.js": [
-      "eslint --fix",
-      "prettier-eslint --write"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "jest": {
     "testEnvironment": "node",
@@ -118,5 +107,9 @@
     "prettier": "2.3.2",
     "prettier-eslint": "^12.0.0",
     "supertest": "^4.0.2"
+  },
+
+  "engines": {
+    "node": "16.14.0"
   }
 }

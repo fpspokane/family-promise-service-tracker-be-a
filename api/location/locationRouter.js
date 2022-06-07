@@ -3,7 +3,7 @@ const express = require('express');
 const Locations = require('./locationModel');
 const router = express.Router();
 const { requireAdmin } = require('../middleware/authorization');
-const { validateBody, getCoords } = require("./location-middleware");
+const { validateBody, getCoords } = require('./location-middleware');
 
 /**
  * @swagger
